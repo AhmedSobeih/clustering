@@ -162,6 +162,7 @@ def color_features(img):
     features = np.zeros((H*W, C))
 
     # YOUR CODE HERE
+    features = img.reshape(-1, img.shape[-1])
     pass
     # END YOUR CODE
 
