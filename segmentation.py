@@ -62,32 +62,35 @@ def kmeans_fast(features, k, num_iters=100):
         assignments - Array representing cluster assignment of each point.
             (e.g. i-th point is assigned to cluster assignments[i])
     """
-    print(features[0])
     N, D = features.shape
 
     assert N >= k, 'Number of clusters cannot be greater than number of points'
 
     # Randomly initalize cluster centers
     idxs = np.random.choice(N, size=k, replace=False)
-    # print(idxs)
     centers = features[idxs]
-    # print(centers)
     assignments = np.zeros(N, dtype=np.uint32)
     distances = np.empty(shape=(k, N))
+    clustered = list()
+    for i in range(k):
+        clustered.append(list())
+
     for n in range(num_iters):
+        # compute the euclidean distance between each point in a group and the cluster center
+        # (Axis = 1) as we are calculating over the value of each feature and the cluster center (centers[i]) will be brodcasted
         for i in range(k):
             distances[i] = np.linalg.norm(features - centers[i], axis=1)
-            # print(distances[i])
 
+        # Get the best cluster by doing argmin over column values
         assignments = np.argmin(distances, axis=0)
 
-        # checking the validity of the algorithm for the first point
-        if (n == 1):
-            print("First element in features = {} \n ".format(features[0]))
-            print("Centers = {} \n ".format(centers))
-            print("Assignments = {} \n ".format(assignments))
-            print("Distances = {} , {} , {} , {} \n ".format(
-                distances[0][0], distances[1][0], distances[2][0], distances[3][0]))
+        # Append to the each cluster its points
+        for i in range(features.shape[0]):
+            clustered[assignments[i]].append(features[i])
+
+        # Get the mean of each cluster (Axis = 0 as we are getting the mean of x and mean of y of point(x,y))
+        for i in range(k):
+            centers[i] = np.mean(np.asarray(clustered[i]), axis=0)
 
         pass
         # END YOUR CODE
