@@ -36,10 +36,44 @@ def kmeans(features, k, num_iters=100):
     assignments = np.zeros(N, dtype=np.uint32)
 
     for n in range(num_iters):
-        # YOUR CODE HERE
+        for i in range(features.shape[0]):
+            distances = []
+            for center in centers:
+                distance = 0
+                for a, b in zip(features[i], center):
+                    distance += (a - b) ** 2
+                distance = distance ** 0.5
+                distances.append(distance)
+            assignment = distances.index(min(distances))
+            assignments[i] = assignment
+            # assignments.append(assignment)
+
+        # Recalculate the cluster centers as the mean of the points assigned to each cluster
+        new_centers = []
+        for j in range(k):
+            points = [features[i]
+                      for i in range(len(features)) if assignments[i] == j]
+            if points:
+                new_center = []
+                for dim in range(len(points[0])):
+                    dim_sum = 0
+                    for point in points:
+                        dim_sum += point[dim]
+                    new_center.append(dim_sum / len(points))
+                new_centers.append(new_center)
+            else:
+                new_centers.append(centers[j])
+
+        flag = True
+        for a, b in zip(centers, new_centers):
+            if (a[0] != b[0]) or (a[1] != b[1]):
+                flag = False
+        if (flag == True):
+            break
+
+        centers = new_centers
         pass
         # END YOUR CODE
-
     return assignments
 
 
@@ -71,11 +105,13 @@ def kmeans_fast(features, k, num_iters=100):
     centers = features[idxs]
     assignments = np.zeros(N, dtype=np.uint32)
     distances = np.empty(shape=(k, N))
-    clustered = list()
-    for i in range(k):
-        clustered.append(list())
 
     for n in range(num_iters):
+        clustered = list()
+
+        for i in range(k):
+            clustered.append(list())
+
         # compute the euclidean distance between each point in a group and the cluster center
         # (Axis = 1) as we are calculating over the value of each feature and the cluster center (centers[i]) will be brodcasted
         for i in range(k):
@@ -88,13 +124,18 @@ def kmeans_fast(features, k, num_iters=100):
         for i in range(features.shape[0]):
             clustered[assignments[i]].append(features[i])
 
+        newCenters = []
         # Get the mean of each cluster (Axis = 0 as we are getting the mean of x and mean of y of point(x,y))
         for i in range(k):
-            centers[i] = np.mean(np.asarray(clustered[i]), axis=0)
+            newCenters.append(np.mean(np.asarray(clustered[i]), axis=0))
 
+        if (np.array_equal(np.asarray(centers), np.asarray(newCenters))):
+            break
+
+        centers = newCenters
         pass
         # END YOUR CODE
-
+    print(assignments)
     return assignments
 
 
