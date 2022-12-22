@@ -235,21 +235,17 @@ def color_position_features(img):
     H, W, C = img.shape
     color = img_as_float(img)
     features = np.zeros((H*W, C+2))
-    # color shape is (H*W, C)
-    #color = color.reshape(-1, img.shape[-1])
-    print(color.shape)
+
     # YOUR CODE HERE
-    # Creating numpy 2d array of values equals sum of row value and index value
+    # Creating numpy 2d array for X and Y position values
     X, Y = np.mgrid[0:H, 0:W]
-    # reshape X and Y to 1D array
-    #X = X.reshape(-1, 1)
-    print(X.shape)
-    #Y = Y.reshape(-1, 1)
-    print(Y.shape)
-    # stack color and X,Y values
+
+    # stack color and X,Y values to create a 3D array of size(H,W,C+2)
     features = np.dstack((color, X, Y))
+
     # reshape features to 2D array of size(H*W, C+2)
-    features = features.reshape(-1, 5)
+    features = features.reshape(-1, C+2)
+
     # normalize each feature in features
     features = (features - np.mean(features, axis=0)) / \
         np.std(features, axis=0)
