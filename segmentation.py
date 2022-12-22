@@ -108,7 +108,6 @@ def kmeans_fast(features, k, num_iters=100):
 
     for n in range(num_iters):
         clustered = list()
-
         for i in range(k):
             clustered.append(list())
 
@@ -135,7 +134,6 @@ def kmeans_fast(features, k, num_iters=100):
         centers = newCenters
         pass
         # END YOUR CODE
-    print(assignments)
     return assignments
 
 
@@ -207,6 +205,8 @@ def color_features(img):
 
     # YOUR CODE HERE
     features = img.reshape(-1, img.shape[-1])
+    print(features.shape)
+    print(features[0])
     pass
     # END YOUR CODE
 
@@ -235,8 +235,25 @@ def color_position_features(img):
     H, W, C = img.shape
     color = img_as_float(img)
     features = np.zeros((H*W, C+2))
-
+    # color shape is (H*W, C)
+    #color = color.reshape(-1, img.shape[-1])
+    print(color.shape)
     # YOUR CODE HERE
+    # Creating numpy 2d array of values equals sum of row value and index value
+    X, Y = np.mgrid[0:H, 0:W]
+    # reshape X and Y to 1D array
+    #X = X.reshape(-1, 1)
+    print(X.shape)
+    #Y = Y.reshape(-1, 1)
+    print(Y.shape)
+    # stack color and X,Y values
+    features = np.dstack((color, X, Y))
+    # reshape features to 2D array of size(H*W, C+2)
+    features = features.reshape(-1, 5)
+    # normalize each feature in features
+    features = (features - np.mean(features, axis=0)) / \
+        np.std(features, axis=0)
+
     pass
     # END YOUR CODE
 
