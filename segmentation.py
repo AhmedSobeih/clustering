@@ -290,7 +290,11 @@ def compute_accuracy(mask_gt, mask):
     """
 
     accuracy = None
+    indices = np.where(mask_gt == mask)
+    true_segmented = len(indices[0])
+    num_elements = mask_gt.shape[0] * mask_gt.shape[1]
     # YOUR CODE HERE
+    accuracy = true_segmented/num_elements
     pass
     # END YOUR CODE
 
