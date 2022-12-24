@@ -205,8 +205,6 @@ def color_features(img):
 
     # YOUR CODE HERE
     features = img.reshape(-1, img.shape[-1])
-    print(features.shape)
-    print(features[0])
     pass
     # END YOUR CODE
 
